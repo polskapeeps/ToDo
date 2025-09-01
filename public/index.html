@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>miniminder</title>
+    <meta name="theme-color" content="#0f172a" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icons/icon-192.png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="appbar">
+      <h1>miniminder</h1>
+      <button id="btn-install" class="ghost" aria-label="Install app" title="Install app" hidden>Install</button>
+    </header>
+
+    <main class="container">
+      <section class="controls">
+        <form id="new-task-form" autocomplete="off">
+          <input id="task-title" name="title" type="text" placeholder="Add a task" required maxlength="200" />
+          <input id="task-when" name="when" type="datetime-local" />
+          <button type="submit" class="primary">Add</button>
+        </form>
+        <div class="bar">
+          <div class="filters" role="tablist" aria-label="filters">
+            <button data-filter="all" class="chip active" role="tab" aria-selected="true">All</button>
+            <button data-filter="today" class="chip" role="tab">Today</button>
+            <button data-filter="upcoming" class="chip" role="tab">Upcoming</button>
+            <button data-filter="done" class="chip" role="tab">Done</button>
+          </div>
+          <div class="actions">
+            <button id="btn-notify" class="chip" title="Enable notifications">Enable notifications</button>
+          </div>
+        </div>
+      </section>
+
+      <section aria-live="polite">
+        <ul id="task-list" class="list"></ul>
+        <p id="empty" class="empty">No tasks</p>
+      </section>
+    </main>
+
+    <template id="task-item-tpl">
+      <li class="item">
+        <label class="left">
+          <input type="checkbox" class="toggle" />
+          <span class="title"></span>
+        </label>
+        <div class="meta">
+          <time class="when"></time>
+          <button class="snooze ghost" title="Snooze 10 min">Snooze</button>
+          <button class="delete ghost" title="Delete">Delete</button>
+        </div>
+      </li>
+    </template>
+
+    <footer class="foot">
+      <small>Offline ready. Push reminders optional.</small>
+    </footer>
+
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>

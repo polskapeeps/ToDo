@@ -1,0 +1,13 @@
+# Logs and runtime
+node_modules
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-store
+dist
+.data
+data.sqlite
+.env
+.vscode
+.DS_Store

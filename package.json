@@ -1,0 +1,21 @@
+{
+  "name": "miniminder",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Minimal phone-friendly todo and reminder PWA with optional push notifications",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "vapid": "node scripts/gen-vapid.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.5.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "node-schedule": "^2.1.1",
+    "web-push": "^3.6.7"
+  }
+}
