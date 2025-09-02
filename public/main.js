@@ -130,7 +130,10 @@ async function render() {
     const edit = node.querySelector('.edit');
 
     title.textContent = t.title;
-    whenEl.textContent = t.remindAt ? `remind ${fmtWhen(t.remindAt)}` : (t.dueAt ? `due ${fmtWhen(t.dueAt)}` : '');
+    const parts = [];
+    if (t.remindAt) parts.push(`remind ${fmtWhen(t.remindAt)}`);
+    if (t.dueAt) parts.push(`due ${fmtWhen(t.dueAt)}`);
+    whenEl.textContent = parts.join(' \u2022 ');
     toggle.checked = !!t.completed;
 
     toggle.addEventListener('change', async () => {
@@ -276,7 +279,8 @@ $('#new-task-form').addEventListener('submit', async (e) => {
   if (!title) return;
   const whenVal = $('#task-when').value;
   const dueAt = whenVal ? new Date(whenVal).getTime() : null;
-  const remindAt = dueAt; // simple default
+  const remindVal = $('#task-remind').value;
+  const remindAt = remindVal ? new Date(remindVal).getTime() : null;
   const t = {
     id: crypto.randomUUID(),
     title,
@@ -289,6 +293,7 @@ $('#new-task-form').addEventListener('submit', async (e) => {
   await store.put(t);
   $('#task-title').value = '';
   $('#task-when').value = '';
+  $('#task-remind').value = '';
   schedule(t);
   render();
 });
