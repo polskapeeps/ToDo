@@ -127,6 +127,7 @@ async function render() {
     const toggle = node.querySelector('.toggle');
     const del = node.querySelector('.delete');
     const snooze = node.querySelector('.snooze');
+    const edit = node.querySelector('.edit');
 
     title.textContent = t.title;
     whenEl.textContent = t.remindAt ? `remind ${fmtWhen(t.remindAt)}` : (t.dueAt ? `due ${fmtWhen(t.dueAt)}` : '');
@@ -151,6 +152,22 @@ async function render() {
       const now = Date.now();
       const newTime = Math.max((t.remindAt || t.dueAt || now), now) + 10 * 60 * 1000;
       t.remindAt = newTime;
+      t.updatedAt = Date.now();
+      await store.put(t);
+      schedule(t);
+      render();
+    });
+
+    edit.addEventListener('click', async () => {
+      const newTitle = prompt('Title', t.title);
+      if (newTitle === null) return;
+      const dueStr = prompt('Due (YYYY-MM-DDTHH:MM)', t.dueAt ? new Date(t.dueAt).toISOString().slice(0,16) : '');
+      if (dueStr === null) return;
+      const remindStr = prompt('Remind (YYYY-MM-DDTHH:MM)', t.remindAt ? new Date(t.remindAt).toISOString().slice(0,16) : '');
+      if (remindStr === null) return;
+      t.title = newTitle.trim();
+      t.dueAt = dueStr ? new Date(dueStr).getTime() : null;
+      t.remindAt = remindStr ? new Date(remindStr).getTime() : null;
       t.updatedAt = Date.now();
       await store.put(t);
       schedule(t);
