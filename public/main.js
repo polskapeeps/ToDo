@@ -208,6 +208,44 @@ async function enablePush() {
   state.subId = out.id;
   localStorage.setItem('miniminder_sub_id', String(state.subId));
   alert('Push enabled');
+  updateNotifyButton();
+}
+
+async function disablePush() {
+  const reg = await ensureSW();
+  if (reg) {
+    try {
+      const sub = await reg.pushManager.getSubscription();
+      await sub?.unsubscribe();
+    } catch {}
+  }
+  state.subId = null;
+  localStorage.removeItem('miniminder_sub_id');
+  alert('Push disabled');
+  updateNotifyButton();
+}
+
+async function updateNotifyButton() {
+  const btn = $('#btn-notify');
+  const reg = await ensureSW();
+  const sub = await reg?.pushManager.getSubscription();
+  const storedId = Number(localStorage.getItem('miniminder_sub_id') || '0');
+  if (sub) {
+    state.subId = storedId || null;
+  } else {
+    state.subId = null;
+    localStorage.removeItem('miniminder_sub_id');
+  }
+  const hasSub = Notification.permission === 'granted' && !!sub && !!state.subId;
+  if (hasSub) {
+    btn.textContent = 'Disable notifications';
+    btn.title = 'Disable notifications';
+    btn.onclick = disablePush;
+  } else {
+    btn.textContent = 'Enable notifications';
+    btn.title = 'Enable notifications';
+    btn.onclick = enablePush;
+  }
 }
 
 function urlBase64ToUint8Array(base64String) {
@@ -253,8 +291,6 @@ $$('.filters .chip').forEach(btn => {
   });
 });
 
-$('#btn-notify').addEventListener('click', enablePush);
-
 // install prompt
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
@@ -295,6 +331,7 @@ async function boot() {
   await ensureSW();
   const tasks = await store.all();
   for (const t of tasks) scheduleLocalReminder(t);
+  await updateNotifyButton();
   render();
 }
 boot();
