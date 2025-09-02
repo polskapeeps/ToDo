@@ -3,6 +3,32 @@
 const $ = s => document.querySelector(s);
 const $$ = s => Array.from(document.querySelectorAll(s));
 
+function toast(message, type = 'info') {
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    container.style.position = 'fixed';
+    container.style.bottom = '1rem';
+    container.style.right = '1rem';
+    container.style.zIndex = '1000';
+    document.body.appendChild(container);
+  }
+  const el = document.createElement('div');
+  el.textContent = message;
+  el.style.background = type === 'error' ? '#dc2626' : (type === 'success' ? '#16a34a' : '#333');
+  el.style.color = '#fff';
+  el.style.padding = '0.5rem 1rem';
+  el.style.marginTop = '0.5rem';
+  el.style.borderRadius = '4px';
+  el.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
+  container.appendChild(el);
+  setTimeout(() => {
+    el.remove();
+    if (!container.hasChildNodes()) container.remove();
+  }, 3000);
+}
+
 const state = {
   filter: 'all',
   subId: null,
@@ -185,14 +211,20 @@ async function ensureSW() {
 
 async function enablePush() {
   const perm = await Notification.requestPermission();
-  if (perm !== 'granted') return alert('Notifications blocked');
+  if (perm !== 'granted') {
+    toast('Notifications blocked', 'error');
+    return;
+  }
   const reg = await ensureSW();
-  if (!reg) return alert('No service worker');
+  if (!reg) {
+    toast('No service worker', 'error');
+    return;
+  }
   // Fetch server public key
   const res = await fetch('/api/vapid-public-key').then(r => r.json()).catch(() => ({ key: '' }));
   const pub = res?.key || '';
   if (!pub) {
-    alert('Push not configured on server. Local reminders only.');
+    toast('Push not configured on server. Local reminders only.', 'error');
     return;
   }
   const key = urlBase64ToUint8Array(pub);
@@ -207,7 +239,7 @@ async function enablePush() {
   }).then(r => r.json());
   state.subId = out.id;
   localStorage.setItem('miniminder_sub_id', String(state.subId));
-  alert('Push enabled');
+  toast('Push enabled', 'success');
 }
 
 function urlBase64ToUint8Array(base64String) {
