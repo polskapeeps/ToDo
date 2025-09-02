@@ -19,7 +19,9 @@
     <main class="container">
       <section class="controls">
         <form id="new-task-form" autocomplete="off">
+          <label for="task-title" class="visually-hidden">Task title</label>
           <input id="task-title" name="title" type="text" placeholder="Add a task" required maxlength="200" />
+          <label for="task-when" class="visually-hidden">When</label>
           <input id="task-when" name="when" type="datetime-local" />
           <button type="submit" class="primary">Add</button>
         </form>
