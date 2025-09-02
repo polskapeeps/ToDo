@@ -29,6 +29,18 @@ No accounts by default. Local IndexedDB storage. Server only handles push schedu
 Any Node host works. The server serves static files from ./public and exposes /api for push.
 Use a reverse proxy for TLS.
 
+### Serverless (Netlify)
+
+For a lightweight deployment, a Netlify Function is provided in `netlify/functions/api.js`.
+It handles `/api/subscribe` and `/api/schedule` and can be used instead of the Node server.
+
+1. Deploy the static site from the `public/` directory.
+2. Include the provided `netlify.toml` so requests to `/api/*` are routed to the function.
+3. Set `VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY` environment variables in your Netlify project.
+
+The client uses relative `/api` URLs, so when the function and static site share a domain,
+the app automatically points to the serverless endpoint.
+
 ## Structure
 
 - `public/` client app, PWA assets
